@@ -25,34 +25,27 @@ func main() {
 		cancel()
 	}()
 
-	// Enable auto permission mode for non-interactive use
-	permMode := claudecode.PermissionModeAuto
-	options := &claudecode.ClaudeCodeOptions{
-		PermissionMode: &permMode,
-		AllowedTools:   []string{"Read", "Edit", "Write"},
-	}
+	// Use empty options for simple text response
+	options := &claudecode.ClaudeCodeOptions{}
 
-	prompt := "Read the README.md file if it exists and summarize its contents"
+	prompt := "Explain the concept of recursion in programming"
 
 	fmt.Println("Starting streaming query...")
 	ch := claudecode.Query(ctx, prompt, options)
 
 	// Stream messages as they arrive
-	for {
-		msg, err := ch.Next()
-		if err != nil {
-			if err.Error() == "EOF" {
-				// Normal completion
-				break
-			}
-			log.Fatalf("Error: %v", err)
+	for result := range ch {
+		if result.Error != nil {
+			log.Fatalf("Error: %v", result.Error)
 		}
+		
+		msg := result.Message
 
 		// Process different message types
 		switch m := msg.(type) {
 		case claudecode.AssistantMessage:
 			// Stream assistant responses
-			for _, rawBlock := range m.Content {
+			for _, rawBlock := range m.Content() {
 				block, err := claudecode.ParseContentBlock(rawBlock)
 				if err != nil {
 					continue

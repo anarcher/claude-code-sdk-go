@@ -78,8 +78,8 @@ func QuerySimple(ctx context.Context, prompt string, options *ClaudeCodeOptions)
 		
 		messages = append(messages, msgResult.Message)
 		
-		if res, ok := msgResult.Message.(*ResultMessage); ok {
-			result = res
+		if res, ok := msgResult.Message.(ResultMessage); ok {
+			result = &res
 		}
 	}
 	

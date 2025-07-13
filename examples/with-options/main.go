@@ -11,22 +11,14 @@ import (
 func main() {
 	ctx := context.Background()
 
-	// Configure options
-	maxThinking := 10000
-	systemPrompt := "You are a helpful coding assistant."
-	model := "claude-3-opus-20240229"
-	cwd := "/tmp"
+	// Configure options (using only supported CLI options)
+	appendPrompt := "Please be concise and clear in your explanations."
 
 	options := &claudecode.ClaudeCodeOptions{
-		AllowedTools:      []string{"Edit", "Read", "Write", "Bash"},
-		MaxThinkingTokens: &maxThinking,
-		SystemPrompt:      &systemPrompt,
-		Model:             &model,
-		CWD:               &cwd,
-		DisallowedTools:   []string{"WebSearch"}, // Disable web search
+		AppendSystemPrompt: &appendPrompt,
 	}
 
-	prompt := "Create a simple Python script that generates the Fibonacci sequence"
+	prompt := "Explain how binary search works"
 
 	// Use QuerySimple for a simpler interface
 	fmt.Println("Sending query with custom options...")
@@ -41,7 +33,7 @@ func main() {
 	for _, msg := range messages {
 		switch m := msg.(type) {
 		case claudecode.AssistantMessage:
-			for _, rawBlock := range m.Content {
+			for _, rawBlock := range m.Content() {
 				block, err := claudecode.ParseContentBlock(rawBlock)
 				if err != nil {
 					continue

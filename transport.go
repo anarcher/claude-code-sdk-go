@@ -38,6 +38,7 @@ func NewTransport(ctx context.Context, cliPath string, args []string) (*Transpor
 	
 	cmd := exec.CommandContext(ctx, cliPath, args...)
 	
+	
 	// Set up pipes
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
@@ -109,21 +110,20 @@ func (t *Transport) Send(prompt string) error {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	
-	if t.closed {
+	if t.closed || t.stdin == nil {
 		return ErrTransportClosed
 	}
 	
-	// The CLI expects JSON input
-	input := map[string]string{"prompt": prompt}
-	data, err := json.Marshal(input)
-	if err != nil {
-		return &TransportError{Message: "failed to marshal input", Cause: err}
-	}
+	// Send the prompt directly as text for interactive mode
 	
-	_, err = fmt.Fprintf(t.stdin, "%s\n", data)
+	_, err := fmt.Fprintf(t.stdin, "%s\n", prompt)
 	if err != nil {
 		return &TransportError{Message: "failed to write to stdin", Cause: err}
 	}
+	
+	// Close stdin to signal end of input (CLI needs to know when input is complete)
+	t.stdin.Close()
+	t.stdin = nil
 	
 	return nil
 }

@@ -44,24 +44,23 @@ func NewInternalClient(ctx context.Context, options *ClaudeCodeOptions) (*Intern
 func buildCLIArgs(options *ClaudeCodeOptions) []string {
 	var args []string
 	
-	// Add base command
-	args = append(args, "query")
-	
-	// Add JSON output flag
-	args = append(args, "--json")
+	// Add streaming JSON output for programmatic use and skip permissions
+	args = append(args, "--verbose", "--output-format", "stream-json", "--dangerously-skip-permissions")
 	
 	// Add options
 	if len(options.AllowedTools) > 0 {
 		args = append(args, "--allowed-tools", strings.Join(options.AllowedTools, ","))
 	}
 	
-	if options.MaxThinkingTokens != nil {
-		args = append(args, "--max-thinking-tokens", fmt.Sprintf("%d", *options.MaxThinkingTokens))
-	}
+	// Note: MaxThinkingTokens is not supported by the current CLI version
+	// if options.MaxThinkingTokens != nil {
+	//     args = append(args, "--max-thinking-tokens", fmt.Sprintf("%d", *options.MaxThinkingTokens))
+	// }
 	
-	if options.SystemPrompt != nil {
-		args = append(args, "--system-prompt", *options.SystemPrompt)
-	}
+	// Note: CLI only supports --append-system-prompt, not --system-prompt
+	// if options.SystemPrompt != nil {
+	//     args = append(args, "--system-prompt", *options.SystemPrompt)
+	// }
 	
 	if options.AppendSystemPrompt != nil {
 		args = append(args, "--append-system-prompt", *options.AppendSystemPrompt)

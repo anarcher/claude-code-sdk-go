@@ -31,7 +31,18 @@ func (m UserMessage) Type() MessageType {
 
 // AssistantMessage represents a message from the assistant
 type AssistantMessage struct {
-	Content []json.RawMessage `json:"content"`
+	Message struct {
+		Content []json.RawMessage `json:"content"`
+		ID      string            `json:"id"`
+		Role    string            `json:"role"`
+		Model   string            `json:"model"`
+	} `json:"message"`
+	SessionID string `json:"session_id"`
+}
+
+// Content returns the content blocks for backward compatibility
+func (m AssistantMessage) Content() []json.RawMessage {
+	return m.Message.Content
 }
 
 func (m AssistantMessage) Type() MessageType {

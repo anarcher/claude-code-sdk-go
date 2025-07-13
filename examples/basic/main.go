@@ -14,9 +14,9 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
 
-	// Query with default options
+	// Query with empty options (no defaults)
 	fmt.Println("Sending query to Claude...")
-	ch := claudecode.Query(ctx, "What's 2+2?", nil)
+	ch := claudecode.Query(ctx, "What's 2+2?", &claudecode.ClaudeCodeOptions{})
 
 	// Process messages as they arrive
 	for result := range ch {
@@ -31,7 +31,7 @@ func main() {
 
 		case claudecode.AssistantMessage:
 			fmt.Print("Assistant: ")
-			for _, rawBlock := range m.Content {
+			for _, rawBlock := range m.Content() {
 				block, err := claudecode.ParseContentBlock(rawBlock)
 				if err != nil {
 					continue

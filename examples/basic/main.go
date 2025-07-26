@@ -25,13 +25,11 @@ func main() {
 		}
 
 		msg := result.Message
-		switch msg.Type() {
-		case claudecode.MessageTypeUser:
-			m := msg.(claudecode.UserMessage)
+		switch m := msg.(type) {
+		case claudecode.UserMessage:
 			fmt.Printf("User: %s\n", m.Content)
 
-		case claudecode.MessageTypeAssistant:
-			m := msg.(claudecode.AssistantMessage)
+		case claudecode.AssistantMessage:
 			fmt.Print("Assistant: ")
 			for _, rawBlock := range m.Content() {
 				block, err := claudecode.ParseContentBlock(rawBlock)
@@ -49,12 +47,10 @@ func main() {
 			}
 			fmt.Println()
 
-		case claudecode.MessageTypeSystem:
-			m := msg.(claudecode.SystemMessage)
+		case claudecode.SystemMessage:
 			fmt.Printf("System (%s): %s\n", m.Subtype, string(m.Data))
 
-		case claudecode.MessageTypeResult:
-			m := msg.(claudecode.ResultMessage)
+		case claudecode.ResultMessage:
 			fmt.Printf("\nResult: %s\n", m.Content)
 			if m.Cost != nil {
 				fmt.Printf("Cost: $%.4f\n", m.Cost.TotalCost)

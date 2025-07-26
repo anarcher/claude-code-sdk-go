@@ -49,7 +49,7 @@ func buildCLIArgs(options *ClaudeCodeOptions) []string {
 	
 	// Add options
 	if len(options.AllowedTools) > 0 {
-		args = append(args, "--allowed-tools", strings.Join(options.AllowedTools, ","))
+		args = append(args, "--allowedTools", strings.Join(options.AllowedTools, ","))
 	}
 	
 	// Note: MaxThinkingTokens is not supported by the current CLI version
@@ -83,7 +83,7 @@ func buildCLIArgs(options *ClaudeCodeOptions) []string {
 	}
 	
 	if len(options.DisallowedTools) > 0 {
-		args = append(args, "--disallowed-tools", strings.Join(options.DisallowedTools, ","))
+		args = append(args, "--disallowedTools", strings.Join(options.DisallowedTools, ","))
 	}
 	
 	if options.Model != nil {

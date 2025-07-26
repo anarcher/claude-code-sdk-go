@@ -42,9 +42,8 @@ func main() {
 		msg := result.Message
 
 		// Process different message types
-		switch msg.Type() {
-		case claudecode.MessageTypeAssistant:
-			m := msg.(claudecode.AssistantMessage)
+		switch m := msg.(type) {
+		case claudecode.AssistantMessage:
 			// Stream assistant responses
 			for _, rawBlock := range m.Content() {
 				block, err := claudecode.ParseContentBlock(rawBlock)
@@ -66,15 +65,13 @@ func main() {
 				}
 			}
 
-		case claudecode.MessageTypeSystem:
-			m := msg.(claudecode.SystemMessage)
+		case claudecode.SystemMessage:
 			// System messages (like thinking, etc.)
 			if m.Subtype == "thinking" {
 				fmt.Print("🤔 ")
 			}
 
-		case claudecode.MessageTypeResult:
-			m := msg.(claudecode.ResultMessage)
+		case claudecode.ResultMessage:
 			// Final result
 			fmt.Printf("\n\n✅ Complete!\n")
 			if m.Cost != nil {

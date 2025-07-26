@@ -5,7 +5,7 @@ A Go SDK for interacting with Claude through the Claude Code CLI. This SDK provi
 ## Installation
 
 ```bash
-go get github.com/anarcher/claude-code-sdk-go
+go get github.com/anarcher/claude-code-sdk-go/claudecode
 ```
 
 ## Requirements
@@ -23,7 +23,7 @@ import (
     "fmt"
     "log"
     
-    claudecode "github.com/anarcher/claude-code-sdk-go"
+    "github.com/anarcher/claude-code-sdk-go/claudecode"
 )
 
 func main() {

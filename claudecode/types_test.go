@@ -17,8 +17,17 @@ func TestMessageTypes(t *testing.T) {
 			wantType: MessageTypeUser,
 		},
 		{
-			name:     "AssistantMessage",
-			message:  AssistantMessage{Content: []json.RawMessage{json.RawMessage(`{"type":"text","text":"Hi"}`)}},
+			name: "AssistantMessage",
+			message: AssistantMessage{
+				Message: struct {
+					Content []json.RawMessage `json:"content"`
+					ID      string            `json:"id"`
+					Role    string            `json:"role"`
+					Model   string            `json:"model"`
+				}{
+					Content: []json.RawMessage{json.RawMessage(`{"type":"text","text":"Hi"}`)},
+				},
+			},
 			wantType: MessageTypeAssistant,
 		},
 		{

@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	claudecode "github.com/anarcher/claude-code-sdk-go"
+	"github.com/anarcher/claude-code-sdk-go/claudecode"
 )
 
 func main() {
@@ -25,11 +25,13 @@ func main() {
 		}
 
 		msg := result.Message
-		switch m := msg.(type) {
-		case claudecode.UserMessage:
+		switch msg.Type() {
+		case claudecode.MessageTypeUser:
+			m := msg.(*claudecode.UserMessage)
 			fmt.Printf("User: %s\n", m.Content)
 
-		case claudecode.AssistantMessage:
+		case claudecode.MessageTypeAssistant:
+			m := msg.(*claudecode.AssistantMessage)
 			fmt.Print("Assistant: ")
 			for _, rawBlock := range m.Content() {
 				block, err := claudecode.ParseContentBlock(rawBlock)
@@ -37,20 +39,22 @@ func main() {
 					continue
 				}
 				switch b := block.(type) {
-				case claudecode.TextBlock:
+				case *claudecode.TextBlock:
 					fmt.Print(b.Text)
-				case claudecode.ToolUseBlock:
+				case *claudecode.ToolUseBlock:
 					fmt.Printf("\n[Tool Use: %s]", b.Name)
-				case claudecode.ToolResultBlock:
+				case *claudecode.ToolResultBlock:
 					fmt.Printf("\n[Tool Result: %s]", b.ToolUseID)
 				}
 			}
 			fmt.Println()
 
-		case claudecode.SystemMessage:
+		case claudecode.MessageTypeSystem:
+			m := msg.(*claudecode.SystemMessage)
 			fmt.Printf("System (%s): %s\n", m.Subtype, string(m.Data))
 
-		case claudecode.ResultMessage:
+		case claudecode.MessageTypeResult:
+			m := msg.(*claudecode.ResultMessage)
 			fmt.Printf("\nResult: %s\n", m.Content)
 			if m.Cost != nil {
 				fmt.Printf("Cost: $%.4f\n", m.Cost.TotalCost)

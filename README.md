@@ -39,16 +39,20 @@ func main() {
         }
         
         // Handle different message types
-        switch msg := result.Message.(type) {
-        case claudecode.AssistantMessage:
+        switch result.Message.Type() {
+        case "assistant":
             // Process assistant response
-            for _, block := range msg.Content {
-                if text, ok := block.(claudecode.TextBlock); ok {
-                    fmt.Println(text.Text)
+            if msg, ok := result.Message.(claudecode.AssistantMessage); ok {
+                for _, block := range msg.Content() {
+                    if text, ok := block.(claudecode.TextBlock); ok {
+                        fmt.Println(text.Text)
+                    }
                 }
             }
-        case claudecode.ResultMessage:
-            fmt.Printf("Result: %s\n", msg.Content)
+        case "result":
+            if msg, ok := result.Message.(claudecode.ResultMessage); ok {
+                fmt.Printf("Result: %s\n", msg.Content)
+            }
         }
     }
 }
@@ -88,16 +92,20 @@ fmt.Printf("Total cost: $%.4f\n", result.Cost.TotalCost)
 ```go
 ch := claudecode.Query(ctx, prompt, nil)
 
-for {
-    msg, err := ch.Next()
-    if err != nil {
-        if err.Error() == "EOF" {
-            break
-        }
-        log.Fatal(err)
+for result := range ch {
+    if result.Error != nil {
+        log.Fatal(result.Error)
     }
     
     // Process message in real-time
+    switch result.Message.Type() {
+    case "assistant":
+        // Handle assistant message
+    case "system":
+        // Handle system message
+    case "result":
+        // Handle result message
+    }
 }
 ```
 

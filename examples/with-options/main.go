@@ -33,16 +33,16 @@ func main() {
 	for _, msg := range messages {
 		switch msg.Type() {
 		case claudecode.MessageTypeAssistant:
-			m := msg.(*claudecode.AssistantMessage)
+			m := msg.(claudecode.AssistantMessage)
 			for _, rawBlock := range m.Content() {
 				block, err := claudecode.ParseContentBlock(rawBlock)
 				if err != nil {
 					continue
 				}
 				switch b := block.(type) {
-				case *claudecode.TextBlock:
+				case claudecode.TextBlock:
 					fmt.Println(b.Text)
-				case *claudecode.ToolUseBlock:
+				case claudecode.ToolUseBlock:
 					fmt.Printf("\n[Using tool: %s]\n", b.Name)
 				}
 			}

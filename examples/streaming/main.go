@@ -44,7 +44,7 @@ func main() {
 		// Process different message types
 		switch msg.Type() {
 		case claudecode.MessageTypeAssistant:
-			m := msg.(*claudecode.AssistantMessage)
+			m := msg.(claudecode.AssistantMessage)
 			// Stream assistant responses
 			for _, rawBlock := range m.Content() {
 				block, err := claudecode.ParseContentBlock(rawBlock)
@@ -52,11 +52,11 @@ func main() {
 					continue
 				}
 				switch b := block.(type) {
-				case *claudecode.TextBlock:
+				case claudecode.TextBlock:
 					fmt.Print(b.Text)
-				case *claudecode.ToolUseBlock:
+				case claudecode.ToolUseBlock:
 					fmt.Printf("\n[Calling %s...]\n", b.Name)
-				case *claudecode.ToolResultBlock:
+				case claudecode.ToolResultBlock:
 					if b.IsError {
 						fmt.Printf("[Tool error]\n")
 					} else if b.Output != nil {
@@ -67,14 +67,14 @@ func main() {
 			}
 
 		case claudecode.MessageTypeSystem:
-			m := msg.(*claudecode.SystemMessage)
+			m := msg.(claudecode.SystemMessage)
 			// System messages (like thinking, etc.)
 			if m.Subtype == "thinking" {
 				fmt.Print("🤔 ")
 			}
 
 		case claudecode.MessageTypeResult:
-			m := msg.(*claudecode.ResultMessage)
+			m := msg.(claudecode.ResultMessage)
 			// Final result
 			fmt.Printf("\n\n✅ Complete!\n")
 			if m.Cost != nil {
